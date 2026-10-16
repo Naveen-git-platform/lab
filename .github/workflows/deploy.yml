@@ -1,0 +1,96 @@
+name: Validate and deploy WorkPulse
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Check app files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check JavaScript syntax
+        run: node --check app.js
+
+      - name: Check HTML structure and required app elements
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          app = Path("app.js").read_text(encoding="utf-8")
+          css = Path("styles.css").read_text(encoding="utf-8")
+          class Checker(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+                  self.scripts = []
+                  self.styles = []
+              def handle_starttag(self, tag, attrs):
+                  values = dict(attrs)
+                  if "id" in values:
+                      self.ids.append(values["id"])
+                  if tag == "script" and values.get("src"):
+                      self.scripts.append(values["src"])
+                  if tag == "link" and values.get("rel") == "stylesheet":
+                      self.styles.append(values.get("href"))
+          checker = Checker()
+          checker.feed(html)
+          assert len(checker.ids) == len(set(checker.ids)), "Duplicate HTML id found"
+          for required in ("app-content", "entry-modal", "entry-form", "global-search", "backup-modal"):
+              assert required in checker.ids, f"Missing required element id: {required}"
+          assert "./app.js" in checker.scripts, "app.js is not linked"
+          assert "./styles.css" in checker.styles, "styles.css is not linked"
+          for required in ("renderOverview", "renderTimesheet", "exportCSV", "restoreBackup", "localStorage"):
+              assert required in app, f"Missing expected app feature: {required}"
+          assert "@media" in css, "Responsive styles are missing"
+          print(f"HTML smoke checks passed: {len(checker.ids)} unique ids")
+          print("Application files and expected features are present")
+          PY
+
+      - name: Prepare static website
+        run: |
+          mkdir -p site
+          cp index.html styles.css app.js site/
+          cp README.md site/
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Publish GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Deploy site
+        id: deployment
+        uses: actions/deploy-pages@v4
