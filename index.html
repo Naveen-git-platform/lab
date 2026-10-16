@@ -78,6 +78,16 @@
       <p class="backup-warning">Restoring adds the imported entries to your current list; existing entries are not overwritten.</p>
     </div>
   </div>
+  <section class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title">
+    <div class="welcome-visual"><div class="welcome-brand"><span class="welcome-mark">⌁</span><span>workpulse</span></div>
+      <div class="welcome-hero-copy"><span class="welcome-kicker">LESS BUSYWORK. MORE CLARITY.</span><h1>Your work,<br>in one calm place.</h1><p>Capture the small things, keep your promises, and turn your week into a timesheet without the last-minute scramble.</p></div>
+      <div class="welcome-preview"><div class="preview-top"><span>YOUR WEEK</span><span class="preview-live">● LOCAL DEMO</span></div><div class="preview-metric"><strong>12.5h</strong><span>time captured</span></div><div class="preview-bars"><i style="height:40%"></i><i style="height:68%"></i><i style="height:52%"></i><i style="height:84%"></i><i style="height:62%"></i><i style="height:95%"></i><i style="height:30%"></i></div><div class="preview-caption">Tasks · Follow-ups · Timesheets</div></div><div class="welcome-footnote">Built for the work between meetings.</div>
+    </div><div class="welcome-form-side"><form class="welcome-form" id="welcome-form"><span class="welcome-step">GET STARTED IN 30 SECONDS</span><h2 id="welcome-title">Create your workspace</h2><p class="welcome-intro">Start with a local profile. No payment or API key needed.</p>
+      <label for="profile-name">Your name</label><input id="profile-name" name="name" autocomplete="name" placeholder="e.g. Alex Morgan" maxlength="70" required>
+      <label for="profile-email">Email address <span>(optional)</span></label><input id="profile-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" maxlength="120">
+      <button class="welcome-submit" type="submit">Create local workspace <span>↗</span></button><button class="welcome-demo" type="button" id="explore-demo">Explore with sample data</button>
+      <div class="welcome-notice"><span>ⓘ</span><p><strong>Prototype sign-up</strong><br>This saves your profile on this browser only. Secure accounts, passwords, email verification, and cross-device sync are not enabled yet.</p></div><p class="welcome-privacy">Your entries stay in this browser. Use Backup &amp; restore before changing devices.</p>
+    </form></div></section>
   <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
   <script src="./app.js" defer></script>
 </body>
