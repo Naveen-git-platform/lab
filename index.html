@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2d">
+  <meta name="description" content="WorkPulse turns work notes into clear tasks, follow-ups, and timesheet-ready summaries.">
+  <title>WorkPulse — Make work add up</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236b7cff'/%3E%3Cpath d='M13 34h10l5-13 9 25 5-12h9' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="WorkPulse home">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12h5l2.4-6 4.2 12 2.5-6h4.9"/></svg></span>
+        <span class="brand-copy"><strong>workpulse</strong><small>Make work add up.</small></span>
+      </a>
+      <button class="new-entry-btn" id="new-entry"><span class="plus">+</span> Capture something <kbd>N</kbd></button>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span><span>Overview</span></button>
+        <button class="nav-item" data-view="tasks"><span class="nav-icon">☑</span><span>My tasks</span><span class="nav-count" id="task-count">0</span></button>
+        <button class="nav-item" data-view="followups"><span class="nav-icon">↗</span><span>Follow-ups</span><span class="nav-count" id="followup-count">0</span></button>
+        <button class="nav-item" data-view="timesheet"><span class="nav-icon">◷</span><span>Timesheet</span></button>
+        <button class="nav-item" data-view="activity"><span class="nav-icon">▤</span><span>All activity</span></button>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="privacy-note"><span class="privacy-dot"></span><div><strong>Your work stays yours</strong><p>Saved on this device by default.</p></div></div>
+      <button class="sidebar-footer" id="backup-button"><span>⇩</span> Backup &amp; restore</button>
+      <div class="sidebar-profile"><span class="avatar">Y</span><div><strong>Your workspace</strong><small>Personal</small></div><span class="profile-more">•••</span></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="breadcrumb-current">Overview</strong></div>
+        <div class="topbar-actions">
+          <label class="search-box"><span>⌕</span><input id="global-search" type="search" placeholder="Search your work..." autocomplete="off"><kbd> / </kbd></label>
+          <button class="icon-button" id="export-button" title="Export timesheet CSV" aria-label="Export timesheet">⇧</button>
+          <button class="topbar-add" id="topbar-add">+ New entry</button>
+        </div>
+      </header>
+      <div class="content" id="app-content" aria-live="polite"></div>
+      <footer class="app-footer"><span>WORKPULSE <span class="footer-dot">•</span> A calmer way to work.</span><span id="storage-status">Local-first · No account needed</span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="entry-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-head"><div><p class="eyebrow">QUICK CAPTURE</p><h2 id="modal-title">Get it out of your head.</h2></div><button class="icon-button close-modal" id="close-modal" aria-label="Close">×</button></div>
+      <p class="modal-description">Write it the way you think. WorkPulse will organize it into something actionable.</p>
+      <form id="entry-form">
+        <input type="hidden" id="entry-id">
+        <label class="field-label" for="entry-text">What do you need to remember?</label>
+        <textarea id="entry-text" rows="4" placeholder="e.g. Follow up with Maya about the deployment on Tuesday. Spend 45 min testing the API..." required maxlength="1500"></textarea>
+        <div class="form-row">
+          <div class="field"><label class="field-label" for="entry-type">Organize as</label><select id="entry-type"><option value="task">Task</option><option value="followup">Follow-up</option><option value="note">Note</option></select></div>
+          <div class="field"><label class="field-label" for="entry-project">Project / client</label><input id="entry-project" type="text" list="project-options" placeholder="e.g. Coral Academy" maxlength="80"><datalist id="project-options"></datalist></div>
+        </div>
+        <div class="form-row three-fields">
+          <div class="field"><label class="field-label" for="entry-date">Work date</label><input id="entry-date" type="date" required></div>
+          <div class="field"><label class="field-label" for="entry-minutes">Time spent (min)</label><input id="entry-minutes" type="number" min="0" max="1440" step="5" placeholder="30"></div>
+          <div class="field"><label class="field-label" for="entry-due">Due date</label><input id="entry-due" type="date"></div>
+        </div>
+        <div class="capture-hint"><span>✦</span><span id="capture-hint-text">Tip: start with “follow up”, “remind me”, or “done” to get smart suggestions.</span></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="cancel-entry">Cancel</button><button type="submit" class="btn-primary"><span id="save-entry-label">Save entry</span> <span>↗</span></button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="backup-modal" role="dialog" aria-modal="true" aria-labelledby="backup-title">
+    <div class="modal backup-modal">
+      <div class="modal-head"><div><p class="eyebrow">YOUR DATA</p><h2 id="backup-title">Backup &amp; restore</h2></div><button class="icon-button" id="close-backup" aria-label="Close">×</button></div>
+      <p class="modal-description">Your entries are stored in this browser. Export a backup before changing devices or clearing browser data.</p>
+      <div class="backup-option"><div class="backup-symbol">⇩</div><div><strong>Download a backup</strong><p>Save all notes, tasks, and follow-ups as a JSON file.</p></div><button class="btn-secondary" id="download-backup">Download</button></div>
+      <div class="backup-option"><div class="backup-symbol">⇧</div><div><strong>Restore a backup</strong><p>Import a previous WorkPulse JSON backup.</p></div><button class="btn-secondary" id="restore-backup">Choose file</button></div>
+      <input id="backup-file" type="file" accept="application/json,.json" hidden>
+      <p class="backup-warning">Restoring adds the imported entries to your current list; existing entries are not overwritten.</p>
+    </div>
+  </div>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>
