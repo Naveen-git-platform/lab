@@ -54,3 +54,16 @@ Add optional authenticated sync using Supabase, then add an opt-in LLM integrati
 ## License
 
 MIT
+
+## First-time user experience
+
+The welcome screen lets a visitor create a **local profile** with a name and optional email, or explore the seeded demo workspace. This is onboarding UI only, not production authentication: it does not create an online account, verify email, or use passwords. Profiles and work entries stay in that browser. For real multi-user sign-up, configure Supabase Auth and a database with per-user row-level security before inviting users to store real work data.
+
+## New user walkthrough
+
+1. Open WorkPulse and choose **Explore with sample data** to preview the dashboard, or create a local profile.
+2. Choose **Capture work** / **+ New entry**.
+3. Enter the task or note, select Task / Follow-up / Note, then add a project, work date, minutes, and due date as useful.
+4. Save it. Use the left navigation to review tasks and follow-ups, mark items complete, or edit them.
+5. Open **Timesheet** to review the week and copy the summary or export entries to CSV.
+6. Use **Backup & restore** to save or move your data manually.
