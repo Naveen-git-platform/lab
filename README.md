@@ -35,9 +35,11 @@ Entries are stored in browser `localStorage` on the device being used. That is i
 
 WorkPulse does not upload entries to a server. The current release's suggestions are basic keyword hints, not an AI model. CSV and JSON exports are created in the browser.
 
-## Deploy to GitHub Pages
+## Deployment
 
-The repository includes a GitHub Actions workflow that validates the app and publishes it to GitHub Pages on every push to `main`. On the first setup, a repository owner may need to visit **Settings → Pages** and select **GitHub Actions** as the build and deployment source. The connected GitHub app in this development session cannot change repository Pages settings itself. After the source is enabled, rerun the **Validate and deploy WorkPulse** workflow from the Actions tab or push a new commit. The intended address is `https://naveen-git-platform.github.io/lab/` once the deployment completes.
+A production deployment was created on Vercel from the repository files. Open **[WorkPulse](https://workpulse-eight-amber.vercel.app/)** to use it. The deployment is configured so production can be public while preview deployments remain protected.
+
+The GitHub Actions workflow validates JavaScript syntax, checks essential HTML structure, and confirms expected features are present. Automatic redeploys from GitHub require the Vercel project's Git repository connection to be active; if a push doesn't trigger a new deployment, connect `Naveen-git-platform/lab` to the `workpulse` project in Vercel or redeploy the latest commit from its dashboard.
 
 ## Suggested next milestone
 
