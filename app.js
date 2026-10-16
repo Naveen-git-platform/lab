@@ -347,8 +347,32 @@
     if((ev.key.toLowerCase()==='n')&&!ev.ctrlKey&&!ev.metaKey&&!['INPUT','TEXTAREA','SELECT'].includes(tag)&&!$('.modal-backdrop:not(.hidden)')){ev.preventDefault();quickCapture();}
     if(ev.key==='/'&&!ev.ctrlKey&&!ev.metaKey&&!['INPUT','TEXTAREA','SELECT'].includes(tag)){ev.preventDefault();$('#global-search').focus();}
   });
-  // Seed a small clearly-labelled demo workspace for the first visit.
+  // Seed a clearly-labelled demo workspace for the first visit.
   if(localStorage.getItem(STORE)===null) { load(); persist(); }
   else load();
+  const PROFILE_KEY='workpulse.profile.v1';
+  function applyProfile(profile) {
+    const name=(profile?.name||'Your workspace').trim()||'Your workspace';
+    const avatar=$('.sidebar-profile .avatar'), profileName=$('.sidebar-profile strong'), profileType=$('.sidebar-profile small');
+    if(avatar)avatar.textContent=name.charAt(0).toUpperCase();
+    if(profileName)profileName.textContent=name;
+    if(profileType)profileType.textContent=profile?.email||'Personal workspace';
+  }
+  function closeWelcome(profile) {
+    if(profile) { try { localStorage.setItem(PROFILE_KEY,JSON.stringify(profile)); } catch {} }
+    $('#welcome-screen')?.classList.add('welcome-hidden');
+    applyProfile(profile||{name:'Demo workspace'});
+    render();
+  }
+  const existingProfile=(()=>{try{return JSON.parse(localStorage.getItem(PROFILE_KEY)||'null')}catch{return null}})();
+  $('#welcome-form').addEventListener('submit',ev=>{
+    ev.preventDefault();
+    const name=$('#profile-name').value.trim(), email=$('#profile-email').value.trim();
+    if(!name){$('#profile-name').focus();return;}
+    closeWelcome({name,email,createdAt:new Date().toISOString(),mode:'local'});
+    toast('Your local workspace is ready. Add your first task when you’re ready.');
+  });
+  $('#explore-demo').addEventListener('click',()=>closeWelcome({name:'Demo workspace',email:'',mode:'demo'}));
+  if(existingProfile){$('#welcome-screen').classList.add('welcome-hidden');applyProfile(existingProfile);}
   render();
 })();
