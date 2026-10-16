@@ -51,7 +51,7 @@
       <p class="modal-description">Write it the way you think. WorkPulse will organize it into something actionable.</p>
       <form id="entry-form">
         <input type="hidden" id="entry-id">
-        <label class="field-label" for="entry-text">What do you need to remember?</label>
+        <div class="field-label-row"><label class="field-label" for="entry-text">What do you need to remember?</label><button type="button" class="mic-button" id="voice-capture" data-action="voice" aria-label="Dictate a note">◉ Dictate</button></div>
         <textarea id="entry-text" rows="4" placeholder="e.g. Follow up with Maya about the deployment on Tuesday. Spend 45 min testing the API..." required maxlength="1500"></textarea>
         <div class="form-row">
           <div class="field"><label class="field-label" for="entry-type">Organize as</label><select id="entry-type"><option value="task">Task</option><option value="followup">Follow-up</option><option value="note">Note</option></select></div>
