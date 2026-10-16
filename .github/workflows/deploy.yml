@@ -31,7 +31,6 @@ jobs:
           python - <<'PY'
           from html.parser import HTMLParser
           from pathlib import Path
-          import re
           html = Path("index.html").read_text(encoding="utf-8")
           app = Path("app.js").read_text(encoding="utf-8")
           css = Path("styles.css").read_text(encoding="utf-8")
@@ -62,10 +61,3 @@ jobs:
           print(f"HTML smoke checks passed: {len(checker.ids)} unique ids")
           print("Application files and expected features are present")
           PY
-
-      - name: Prepare static website
-        run: |
-          mkdir -p site
-          cp index.html styles.css app.js site/
-          cp README.md site/
-
