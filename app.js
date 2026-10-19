@@ -369,6 +369,12 @@
     ev.preventDefault();
     const name=$('#profile-name').value.trim(), email=$('#profile-email').value.trim();
     if(!name){$('#profile-name').focus();return;}
+    // A new personal workspace must not mix sample tasks into real work.
+    // Keep the sample entries only when the visitor explicitly chooses demo mode.
+    if(!existingProfile && entries.some(entry=>entry.demo)) {
+      entries=entries.filter(entry=>!entry.demo);
+      persist();
+    }
     closeWelcome({name,email,createdAt:new Date().toISOString(),mode:'local'});
     toast('Your local workspace is ready. Add your first task when you’re ready.');
   });
