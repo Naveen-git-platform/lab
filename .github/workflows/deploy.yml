@@ -51,13 +51,15 @@ jobs:
           checker = Checker()
           checker.feed(html)
           assert len(checker.ids) == len(set(checker.ids)), "Duplicate HTML id found"
-          for required in ("app-content", "entry-modal", "entry-form", "global-search", "backup-modal"):
+          for required in ("app-content", "entry-modal", "entry-form", "global-search", "backup-modal", "welcome-screen", "welcome-form", "explore-demo"):
               assert required in checker.ids, f"Missing required element id: {required}"
           assert "./app.js" in checker.scripts, "app.js is not linked"
           assert "./styles.css" in checker.styles, "styles.css is not linked"
-          for required in ("renderOverview", "renderTimesheet", "exportCSV", "restoreBackup", "localStorage"):
+          for required in ("renderOverview", "renderTimesheet", "exportCSV", "restoreBackup", "localStorage", "workpulse.profile.v1", "entries.filter(entry=>!entry.demo)"):
               assert required in app, f"Missing expected app feature: {required}"
           assert "@media" in css, "Responsive styles are missing"
+          assert "prefers-reduced-motion:reduce" in css, "Reduced-motion support is missing"
+          assert ":focus-visible" in css, "Visible keyboard focus styles are missing"
           print(f"HTML smoke checks passed: {len(checker.ids)} unique ids")
           print("Application files and expected features are present")
           PY
